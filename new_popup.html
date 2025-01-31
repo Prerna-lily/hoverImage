@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pet Health Info</title>
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background: transparent;
+            margin: 0;
+            font-family: Arial, sans-serif;
+        }
+        .container {
+            position: relative;
+            width: 90vw;
+            max-width: 600px;
+        }
+        img {
+            width: 100%;
+            height: auto;
+            display: block;
+            border-radius: 50%; /* Ensuring circular image */
+        }
+        .health-section {
+            position: absolute;
+            width: 10vw;
+            max-width: 75px;
+            height: 10vw;
+            max-height: 75px;
+            background: transparent;
+            cursor: pointer;
+            border-radius: 100%;
+        }
+        .popup {
+            display: none;
+            position: absolute;
+            background: #fff;
+            padding: 10px;
+            border-radius: 8px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+            font-size: 14px;
+            width: 250px;
+            text-align: left;
+            white-space: normal;
+            z-index: 100;
+        }
+        .popup img {
+            width: 40px;
+            height: auto;
+            border-radius: 8px;
+            margin-right: 10px;
+            display: inline-block;
+            vertical-align: middle;
+        }
+        .popup-content {
+            display: inline-block;
+            vertical-align: middle;
+            max-width: 180px;
+        }
+        .arrow {
+            display: none;
+            position: absolute;
+            width: 0;
+            height: 0;
+            border-style: solid;
+            border-width: 10px;
+            border-color: transparent transparent white transparent;
+            transform: rotate(-90deg);
+        }
+
+        /* Mobile Responsiveness */
+        @media (max-width: 600px) {
+            .popup {
+                font-size: 12px;
+                width: 200px;
+            }
+            .popup img {
+                width: 30px;
+            }
+            .health-section {
+                width: 12vw;
+                height: 12vw;
+            }
+            .arrow {
+                border-width: 8px;
+            }
+        }
+        
+        @media (max-width: 400px) {
+            .popup {
+                font-size: 10px;
+                width: 180px;
+                padding: 8px;
+            }
+            .popup img {
+                width: 25px;
+            }
+            .health-section {
+                width: 14vw;
+                height: 14vw;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <img src="transformx.jpg" alt="Pet Health">
+        <div class="popup" id="popup"></div>
+        <div class="arrow" id="arrow"></div>
+    </div>
+    <script>
+        const sectionsData = [
+            { top: '14%', left: '25%', info: '<strong>Respiratory Health</strong><br>Clear breathing and optimal lung health for active animals.', image: 'respiratory.png' },
+            { top: '11%', left: '42%', info: '<strong>Intestinal Health</strong><br>Reduction of acute intestinal absorptive disorders during and recovery from acute diarrhoea.', image: 'intestine.jpg' },
+            { top: '15%', left: '63%', info: '<strong>Calming</strong><br>Serenity solutions for stress and anxiety relief across all species.', image: 'calming.jpg' },
+            { top: '32%', left: '78%', info: '<strong>Immunity</strong><br>Boosting the natural defenses of animals with advanced immune support.', image: 'immunity.jpg' },
+            { top: '52%', left: '78%', info: '<strong>Circulatory</strong><br>Enhancing heart and vascular health for dynamic wellbeing.', image: 'circulatory.jpg' },
+            { top: '70%', left: '65%', info: '<strong>Skin Health</strong><br>Nourishing skin and coat to shine from the inside out.', image: 'skinhealth.jpg' },
+            { top: '77%', left: '43%', info: '<strong>Joint Health</strong><br>Promoting strength and mobility for lifelong joint wellness in animals.', image: 'joint.jpg' },
+            { top: '70%', left: '23%', info: '<strong>Urinary & Renal Health</strong><br>Supporting urinary function and kidney vitality through tailored nutrition for animals.', image: 'urinal_renal.jpg' },
+            { top: '52%', left: '10%', info: '<strong>Recovery</strong><br>Optimised solutions for speedy recovery and robust health post-treatment.', image: 'recovery.png' },
+            { top: '33%', left: '10%', info: '<strong>Oral Health</strong><br>Ensuring fresher breath and healthier teeth.', image: 'oral.jpg' }
+        ];
+
+        const container = document.querySelector('.container');
+        const popup = document.getElementById('popup');
+        const arrow = document.getElementById('arrow');
+
+        sectionsData.forEach(({ top, left, info, image }) => {
+            const section = document.createElement('div');
+            section.classList.add('health-section');
+            section.style.top = top;
+            section.style.left = left;
+            section.dataset.info = info;
+            section.dataset.image = image;
+        
+            function showPopup(e) {
+                e.stopPropagation(); // Prevents click from bubbling up
+                const sectionRect = e.target.getBoundingClientRect();
+                const containerRect = container.getBoundingClientRect();
+        
+                popup.innerHTML = `<img src="${e.target.dataset.image}" alt="Health Info"><div class="popup-content">${e.target.dataset.info}</div>`;
+                popup.style.display = 'block';
+                popup.style.top = `${sectionRect.top - containerRect.top - 10}px`;
+                popup.style.left = `${sectionRect.left - containerRect.left + 60}px`;
+        
+                arrow.style.display = 'block';
+                arrow.style.top = `${sectionRect.top - containerRect.top + 10}px`;
+                arrow.style.left = `${sectionRect.left - containerRect.left + 40}px`;
+            }
+        
+            section.addEventListener('mouseenter', showPopup);
+            section.addEventListener('mouseleave', () => {
+                popup.style.display = 'none';
+                arrow.style.display = 'none';
+            });
+        
+            section.addEventListener('click', showPopup);
+            section.addEventListener('touchstart', showPopup); // For mobile touch support
+        
+            container.appendChild(section);
+        });
+        
+        // Close popup when tapping outside
+        document.body.addEventListener('click', () => {
+            popup.style.display = 'none';
+            arrow.style.display = 'none';
+        });
+        
+    </script>
+</body>
+</html>
